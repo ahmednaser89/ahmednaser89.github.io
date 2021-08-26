@@ -80,7 +80,7 @@ document.getElementById("demo").innerHTML = ('hhhhhhh');
       soundClips.appendChild(clipContainer);
 
       audio.controls = true;
-      const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+      const blob = new Blob(chunks, { 'type' : 'audio/mp3; codecs=flac' });
       chunks = [];
       const audioURL = window.URL.createObjectURL(blob);
       audio.src = audioURL;
@@ -109,7 +109,7 @@ let reader = new FileReader()
         reader.onloadend = () => {
             console.log(reader.result);
             // You can upload the base64 to server here.
-ThunkableWebviewerExtension.postMessage('hello world');
+ThunkableWebviewerExtension.postMessage(reader.result);
             
         }
         reader.readAsDataURL(e.data);
