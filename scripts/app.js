@@ -1,4 +1,3 @@
-// set up basic variables for app
 
 const record = document.querySelector('.record');
 const stop = document.querySelector('.stop');
@@ -48,6 +47,10 @@ if (navigator.mediaDevices.getUserMedia) {
 
       stop.disabled = true;
       record.disabled = false;
+
+document.getElementById("demo").innerHTML = ('hhhhhhh');
+
+
     }
 
     mediaRecorder.onstop = function(e) {
@@ -81,6 +84,7 @@ if (navigator.mediaDevices.getUserMedia) {
       chunks = [];
       const audioURL = window.URL.createObjectURL(blob);
       audio.src = audioURL;
+
       console.log("recorder stopped");
 
       deleteButton.onclick = function(e) {
@@ -100,7 +104,22 @@ if (navigator.mediaDevices.getUserMedia) {
     }
 
     mediaRecorder.ondataavailable = function(e) {
-      chunks.push(e.data);
+      chunks.push(e.data);      
+let reader = new FileReader()
+        reader.onloadend = () => {
+            console.log(reader.result);
+            // You can upload the base64 to server here.
+ThunkableWebviewerExtension.postMessage('hello world');
+            
+        }
+        reader.readAsDataURL(e.data);
+
+
+
+
+
+
+
     }
   }
 
@@ -176,3 +195,56 @@ window.onresize = function() {
 }
 
 window.onresize();
+
+
+
+
+
+
+
+
+
+var ThunkableWebviewerExtension = (function () {
+  const postMessageToWebview = (message) => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(message);
+    } else {
+      window.parent.postMessage(message, '*');
+    }
+  };
+
+  const getReceiveMessageCallback = (fxn, hasReturnValue) => (event) => {
+    if (typeof fxn === 'function') {
+      if (event.data) {
+        let dataObject;
+        try {
+          dataObject = JSON.parse(event.data);
+        } catch (e) {
+          // message is not valid json
+        }
+        if (dataObject && dataObject.type === 'ThunkablePostMessage' && hasReturnValue) {
+          fxn(dataObject.message, (returnValue) => {
+            const returnMessageObject = { type: 'ThunkablePostMessageReturnValue', uuid: dataObject.uuid, returnValue };
+            postMessageToWebview(JSON.stringify(returnMessageObject));
+          });
+        } else if (!hasReturnValue && (!dataObject || dataObject.type !== 'ThunkablePostMessage')) {
+          fxn(event.data);
+        }
+      }
+    }
+  };
+
+  return {
+    postMessage: postMessageToWebview,
+    receiveMessage: function(fxn) {
+      const callbackFunction = getReceiveMessageCallback(fxn, false);
+      document.addEventListener('message', callbackFunction, false);
+      window.addEventListener('message', callbackFunction, false);
+    },
+    receiveMessageWithReturnValue: function(fxn) {
+      const callbackFunction = getReceiveMessageCallback(fxn, true);
+      document.addEventListener('message', callbackFunction, false);
+      window.addEventListener('message', callbackFunction, false);
+    },
+  };
+})();
