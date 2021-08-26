@@ -80,7 +80,7 @@ document.getElementById("demo").innerHTML = ('hhhhhhh');
       soundClips.appendChild(clipContainer);
 
       audio.controls = true;
-      const blob = new Blob(chunks, { 'type' : 'audio/mp3; codecs=flac' });
+      const blob = new Blob(chunks, { 'type' : 'audio/mp3; codecs=mp3' });
       chunks = [];
       const audioURL = window.URL.createObjectURL(blob);
       audio.src = audioURL;
