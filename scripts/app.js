@@ -4,8 +4,7 @@ const stop = document.querySelector('.stop');
 const soundClips = document.querySelector('.sound-clips');
 const canvas = document.querySelector('.visualizer');
 const mainSection = document.querySelector('.main-controls');
-//let outputFile = Environment.getExternalStorageDirectory()
-          //  .getAbsolutePath() + "/myrecording.mp3";
+
 // disable stop button while not recording
 
 stop.disabled = true;
@@ -26,10 +25,6 @@ if (navigator.mediaDevices.getUserMedia) {
   let onSuccess = function(stream) {
     const mediaRecorder = new MediaRecorder(stream);
 
-    mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-    mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-  //  mediaRecorder.setOutputFile(outputFile);
     visualize(stream);
 
     record.onclick = function() {
@@ -85,7 +80,7 @@ document.getElementById("demo").innerHTML = ('hhhhhhh');
       soundClips.appendChild(clipContainer);
 
       audio.controls = true;
-      const blob = new Blob(chunks, { 'type' : 'audio/flac; codecs=FLAC' });
+      const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
       chunks = [];
       const audioURL = window.URL.createObjectURL(blob);
       audio.src = audioURL;
