@@ -4,8 +4,8 @@ const stop = document.querySelector('.stop');
 const soundClips = document.querySelector('.sound-clips');
 const canvas = document.querySelector('.visualizer');
 const mainSection = document.querySelector('.main-controls');
-let outputFile = Environment.getExternalStorageDirectory()
-            .getAbsolutePath() + "/myrecording.mp3";
+//let outputFile = Environment.getExternalStorageDirectory()
+          //  .getAbsolutePath() + "/myrecording.mp3";
 // disable stop button while not recording
 
 stop.disabled = true;
@@ -29,7 +29,7 @@ if (navigator.mediaDevices.getUserMedia) {
     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
     mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-    mediaRecorder.setOutputFile(outputFile);
+  //  mediaRecorder.setOutputFile(outputFile);
     visualize(stream);
 
     record.onclick = function() {
