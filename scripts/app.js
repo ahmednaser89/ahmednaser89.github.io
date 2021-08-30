@@ -29,7 +29,7 @@ if (navigator.mediaDevices.getUserMedia) {
     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
     mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-    mediaRecorder.setOutputFile(outputFile);`
+    mediaRecorder.setOutputFile(outputFile);
     visualize(stream);
 
     record.onclick = function() {
