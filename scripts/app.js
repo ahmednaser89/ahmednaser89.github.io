@@ -24,7 +24,7 @@ if (navigator.mediaDevices.getUserMedia) {
 
   let onSuccess = function(stream) {
     const mediaRecorder = new MediaRecorder(stream);
- mediaRecorder.mimeType = 'audio/wav';
+
     visualize(stream);
 
     record.onclick = function() {
@@ -80,7 +80,7 @@ document.getElementById("demo").innerHTML = ('hhhhhhh');
       soundClips.appendChild(clipContainer);
 
       audio.controls = true;
-      const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+      const blob = new Blob(chunks, { 'type' : 'audio/flac; codecs=flac' });
       chunks = [];
       const audioURL = window.URL.createObjectURL(blob);
       audio.src = audioURL;
