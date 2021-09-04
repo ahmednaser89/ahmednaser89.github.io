@@ -24,7 +24,7 @@ if (navigator.mediaDevices.getUserMedia) {
 
   let onSuccess = function(stream) {
     const mediaRecorder = new MediaRecorder(stream);
-
+ mediaRecorder.mimeType = 'audio/wav';
     visualize(stream);
 
     record.onclick = function() {
