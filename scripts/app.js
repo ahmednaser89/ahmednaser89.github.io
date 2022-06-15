@@ -1,48 +1,46 @@
+'use strict'
 
-const record = document.querySelector('.record');
-const stop = document.querySelector('.stop');
-const soundClips = document.querySelector('.sound-clips');
-const canvas = document.querySelector('.visualizer');
-const mainSection = document.querySelector('.main-controls');
+const from2 = require('from2')
+const {pipeline} = require('stream')
+const simulate = require('..')
+const {lossByTime, latency} = simulate
 
-// disable stop button while not recording
+// generate 5k fake packets, emit 1 every 3ms
+let i = 0
+const fake = from2({objectMode: true}, (_, cb) => {
+	if (i >= 5_000) return cb(null, null) // end
+	const packet = i++
+	return setTimeout(cb, 3, null, packet)
+})
 
-stop.disabled = true;
+// signal drops every 5s
+const signalStrenth = t => t % 5_000 / 5_000
 
-// visualiser setup - create web audio api context and canvas
+// weak signal -> packet loss
+const lossy = lossByTime((t, i) => {
+	if (signalStrenth(t) <= .3) {
+		// packet loss from now on, for 1s
+		return {from: t, length: 1000}
+	}
+	return null // no packet loss
+})
+const simLossy = simulate(lossy)
 
-let audioCtx;
-const canvasCtx = canvas.getContext("2d");
+// weak signal -> high latency
+const slow = latency(() => {
+	const s = signalStrenth(Date.now())
+	const jitter = Date.now() % 100 / 100
+	return Math.floor((6 + jitter - s) * 50)
+})
+const simSlow = simulate(slow)
 
-//main block for doing the audio recording
-
-if (navigator.mediaDevices.getUserMedia) {
-  console.log('getUserMedia supported.');
-
-  const constraints = { audio: true };
-  let chunks = [];
-
-  let onSuccess = function(stream) {
-    const mediaRecorder = new MediaRecorder(stream);
-
-    visualize(stream);
-
-    record.onclick = function() {
-      mediaRecorder.start();
-      console.log(mediaRecorder.state);
-      console.log("recorder started");
-      record.style.background = "red";
-
-      stop.disabled = false;
-      record.disabled = true;
-    }
-
-    stop.onclick = function() {
-      mediaRecorder.stop();
-      console.log(mediaRecorder.state);
-      console.log("recorder stopped");
-      record.style.background = "";
-      record.style.color = "";
+simSlow.on('data', console.log)
+pipeline(fake, simLossy, simSlow, (err) => {
+	if (err) {
+		console.error(err)
+		process.exit(1)
+	}
+})
       // mediaRecorder.requestData();
 
       stop.disabled = true;
